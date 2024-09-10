@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ author.name }} - Профиль автора{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ author.name }}</h1>
+            <p class="card-text"><strong>Биография:</strong> {{ author.bio }}</p>
+            <p class="card-text"><strong>Словарный запас:</strong> {{ author.keywords }}</p>
+            <p class="card-text"><strong>Тематика:</strong> {{ author.theme }}</p>
+            <p class="card-text"><strong>Тональность:</strong> {{ author.tone }}</p>
+        </div>
+        <div class="card-footer">
+            {% if author.profile_author %}
+                <a href="{% url 'create_or_edit_profile' author.id %}" class="btn btn-secondary">Редактировать
+                    профиль</a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="btn btn-primary">Назад</a>
+        </div>
+    </div>
+{% endblock %}

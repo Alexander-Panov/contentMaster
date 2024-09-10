@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mb-4">Авторские профили</h1>
+    <div class="mb-5">
+        <h2>Пользовательские профили</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for user_profile in user_profiles %}
+                {% with user_profile.author as profile %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ profile.name }}</h5>
+                                <p class="card-text"><strong>Тематика:</strong> {{ profile.theme }}</p>
+                                <p class="card-text"><strong>Тональность:</strong> {{ profile.tone }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
+                                <a href="{% url 'create_or_edit_profile' profile.id %}" class="btn btn-secondary">Редактировать</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+        <a href="{% url 'create_or_edit_profile' %}" class="btn btn-success mt-3">Создать новый профиль</a>
+    </div>
+    <h2>Профиля известных личностей</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for celebrity in celebrities %}
+            {% with celebrity.author as profile %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ profile.name }}</h5>
+                            <p class="card-text"><strong>Тематика:</strong> {{ profile.theme }}</p>
+                            <p class="card-text"><strong>Тональность:</strong> {{ profile.tone }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+        {% endfor %}
+    </div>
+{% endblock %}

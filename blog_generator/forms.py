@@ -1,10 +1,14 @@
 # blog_generator/forms.py
 
 from django import forms
-from .models import AuthorProfile
+from .models import Author
 
 
-class AuthorProfileForm(forms.ModelForm):
+class AuthorForm(forms.ModelForm):
     class Meta:
-        model = AuthorProfile
-        fields = ['name', 'bio', 'vocabulary', 'theme', 'tone']
+        model = Author
+        fields = ['name', 'bio', 'keywords', 'theme', 'tone']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 3}),
+            'keywords': forms.Textarea(attrs={'rows': 3}),
+        }
