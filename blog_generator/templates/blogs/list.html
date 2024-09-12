@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Blogs{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Блоги</h1>
+
+    <a href="{% url 'create_blog' %}" class="btn btn-primary mb-3">Создать новый блог</a>
+
+    <div class="row">
+        {% for blog in blogs %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ blog.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ blog.theme }}</h6>
+                        <p class="card-text">{{ blog.content|truncatewords:30 }}</p>
+                        <a href="{% url 'blog_detail' blog.slug %}" class="card-link">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

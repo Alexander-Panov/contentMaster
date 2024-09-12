@@ -16,16 +16,16 @@
                             </div>
                             <div class="card-footer">
                                 <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
-                                <a href="{% url 'create_or_edit_profile' profile.id %}" class="btn btn-secondary">Редактировать</a>
+                                <a href="{% url 'edit_author' profile.id %}" class="btn btn-secondary">Редактировать</a>
                             </div>
                         </div>
                     </div>
                 {% endwith %}
             {% endfor %}
         </div>
-        <a href="{% url 'create_or_edit_profile' %}" class="btn btn-success mt-3">Создать новый профиль</a>
+        <a href="{% url 'create_author' %}" class="btn btn-success mt-3">Создать новый профиль</a>
     </div>
-    <h2>Профиля известных личностей</h2>
+    <h2>Профили известных личностей</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for celebrity in celebrities %}
             {% with celebrity.author as profile %}
