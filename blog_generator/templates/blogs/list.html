@@ -5,7 +5,13 @@
 {% block content %}
     <h1 class="mb-4">Блоги</h1>
 
-    <a href="{% url 'create_blog' %}" class="btn btn-primary mb-3">Создать новый блог</a>
+    <div class="mb-4">
+
+        <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+            <i class="fas fa-robot"></i> Генерировать с ИИ
+        </a>
+        <a href="{% url 'create_blog' %}" class="btn btn-outline-success">Создать новый блог</a>
+    </div>
 
     <div class="row">
         {% for blog in blogs %}

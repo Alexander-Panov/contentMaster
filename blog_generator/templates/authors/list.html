@@ -3,7 +3,10 @@
 {% block content %}
     <h1 class="mb-4">Авторские профили</h1>
     <div class="mb-5">
-        <h2>Пользовательские профили</h2>
+        <h2 class="mb-4">Пользовательские профили</h2>
+        <div class="mb-4">
+            <a href="{% url 'create_author' %}" class="btn btn-outline-success">Создать новый профиль</a>
+        </div>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for user_profile in user_profiles %}
                 {% with user_profile.author as profile %}
@@ -16,14 +19,19 @@
                             </div>
                             <div class="card-footer">
                                 <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
-                                <a href="{% url 'edit_author' profile.id %}" class="btn btn-secondary">Редактировать</a>
+                                <a href="{% url 'edit_author' profile.id %}" class="btn btn-sm btn-secondary"
+                                   title="Редактировать">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
                             </div>
+                            <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+                                <i class="fas fa-robot"></i> Генерировать в стиле "{{ profile.name }}"
+                            </a>
                         </div>
                     </div>
                 {% endwith %}
             {% endfor %}
         </div>
-        <a href="{% url 'create_author' %}" class="btn btn-success mt-3">Создать новый профиль</a>
     </div>
     <h2>Профили известных личностей</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -39,6 +47,9 @@
                         <div class="card-footer">
                             <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
                         </div>
+                        <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+                            <i class="fas fa-robot"></i> Генерировать в стиле "{{ profile.name }}"
+                        </a>
                     </div>
                 </div>
             {% endwith %}

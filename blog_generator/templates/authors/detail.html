@@ -12,11 +12,17 @@
             <p class="card-text"><strong>Тональность:</strong> {{ author.tone }}</p>
         </div>
         <div class="card-footer">
+            <a href="{% url 'author_list' %}" class="btn btn-primary" title="Назад"><i
+                    class="fas fa-arrow-left"></i></a>
             {% if author.profile_author %}
-                <a href="{% url 'edit_author' author.id %}" class="btn btn-secondary">Редактировать
-                    профиль</a>
+                <a href="{% url 'edit_author' author.id %}" class="btn btn-secondary" title="Редактировать">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
             {% endif %}
-            <a href="{% url 'home' %}" class="btn btn-primary">Назад</a>
+
+            <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+                <i class="fas fa-robot"></i> Генерировать в стиле "{{ author.name }}"
+            </a>
         </div>
     </div>
 {% endblock %}

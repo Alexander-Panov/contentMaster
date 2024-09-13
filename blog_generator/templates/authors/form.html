@@ -5,26 +5,26 @@
 {% block title %}{% if form.instance.pk %}Редактировать профиль{% else %}Создать профиль{% endif %}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">{% if form.instance.pk %}Редактировать профиль{% else %}Создать профиль{% endif %}</h1>
+    <h1 class="mb-4">{% if form.instance.pk %}Редактировать профиль{% else %}Создать профиль{% endif %}</h1>
 
-<form method="post" class="mb-3">
-    {% csrf_token %}
-    <div class="mb-3">
-        {{ form.name.label_tag }} {{ form.name }}
-    </div>
-    <div class="mb-3">
-        {{ form.bio.label_tag }} {{ form.bio }}
-    </div>
-    <div class="mb-3">
-        {{ form.vocabulary.label_tag }} {{ form.vocabulary }}
-    </div>
-    <div class="mb-3">
-        {{ form.theme.label_tag }} {{ form.theme }}
-    </div>
-    <div class="mb-3">
-        {{ form.tone.label_tag }} {{ form.tone }}
-    </div>
-    <button type="submit" class="btn btn-success">Сохранить</button>
-    <a href="{% url 'home' %}" class="btn btn-secondary">Назад</a>
-</form>
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.name.label_tag }} {{ form.name }}
+        </div>
+        <div class="mb-3">
+            {{ form.bio.label_tag }} {{ form.bio }}
+        </div>
+        <div class="mb-3">
+            {{ form.keywords.label_tag }} {{ form.keywords }}
+        </div>
+        <div class="mb-3">
+            {{ form.theme.label_tag }} {{ form.theme }}
+        </div>
+        <div class="mb-3">
+            {{ form.tone.label_tag }} {{ form.tone }}
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a href="{% url 'author_list' %}" class="btn btn-secondary" title="Назад"><i class="fas fa-arrow-left"></i></a>
+    </form>
 {% endblock %}

@@ -12,5 +12,6 @@ urlpatterns = [
     path('blog/', views.blog_list, name='blog_list'),
     path('blog/new/', views.create_or_edit_blog, name='create_blog'),
     path('blog/edit/<slug:slug>/', views.create_or_edit_blog, name='edit_blog'),
+    path('blog/generate/', views.generate_content, name='generate_blog'),
     path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
 ]

@@ -1,2 +1,38 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="display-4">Добро пожаловать в КонтентМастер</h1>
+                <p class="lead">Создавайте уникальный контент с помощью искусственного интеллекта</p>
+                <hr class="my-4">
+                <p>КонтентМастер использует передовые технологии ИИ для генерации высококачественных статей на любую
+                    тему.</p>
+                <a class="btn btn-primary btn-lg" href="#generateForm" role="button">Начать генерацию</a>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'img/ai-assistant.gif' %}" alt="AI Writing" class="img-fluid">
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <h3>Быстро</h3>
+                <p>Генерируйте статьи за считанные минуты, экономя время на исследованиях и написании.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Уникально</h3>
+                <p>Каждая статья создается с нуля, обеспечивая оригинальность и уникальность контента.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Настраиваемо</h3>
+                <p>Выбирайте тематику, стиль и тон для создания идеального контента для вашей аудитории.</p>
+            </div>
+        </div>
+
+        {% include 'subtemplates/generation_form.html' with form=form %}
+
+    </div>
+{% endblock %}
