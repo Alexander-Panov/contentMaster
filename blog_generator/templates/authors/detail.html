@@ -5,24 +5,25 @@
 {% block content %}
     <div class="card">
         <div class="card-body">
-            <h1 class="card-title">{{ author.name }}</h1>
+            <div class="card-title d-flex align-items-center gap-3">
+                <a href="{% url 'author_list' %}" class="btn btn-primary" title="Назад"><i
+                        class="fas fa-arrow-left"></i></a>
+
+                <h1>{{ author.name }}</h1>
+                {% if author.profile_author %}
+                    <a href="{% url 'edit_author' author.id %}" class="btn btn-secondary" title="Редактировать">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>
+                {% endif %}
+            </div>
             <p class="card-text"><strong>Биография:</strong> {{ author.bio }}</p>
             <p class="card-text"><strong>Словарный запас:</strong> {{ author.keywords }}</p>
             <p class="card-text"><strong>Тематика:</strong> {{ author.theme }}</p>
             <p class="card-text"><strong>Тональность:</strong> {{ author.tone }}</p>
         </div>
-        <div class="card-footer">
-            <a href="{% url 'author_list' %}" class="btn btn-primary" title="Назад"><i
-                    class="fas fa-arrow-left"></i></a>
-            {% if author.profile_author %}
-                <a href="{% url 'edit_author' author.id %}" class="btn btn-secondary" title="Редактировать">
-                    <i class="fas fa-pencil-alt"></i>
-                </a>
-            {% endif %}
 
-            <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
-                <i class="fas fa-robot"></i> Генерировать в стиле "{{ author.name }}"
-            </a>
-        </div>
+        <a href="{% url 'select_author' author.id %}" class="btn btn-success" title="Сгенерировать с ИИ">
+            <i class="fas fa-robot"></i> Генерировать в стиле "{{ author.name }}"
+        </a>
     </div>
 {% endblock %}

@@ -7,25 +7,53 @@ from .models import Author, Blog
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = ['name', 'bio', 'keywords', 'theme', 'tone']
+        fields = ['name', 'bio', 'keywords', 'niche', 'tone']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 3}),
-            'keywords': forms.Textarea(attrs={'rows': 3}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'keywords': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'niche': forms.TextInput(attrs={'class': 'form-control'}),
+            'tone': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Имя автора',
+            'bio': 'Биография',
+            'keywords': 'Ключевые слова',
+            'niche': 'Тематика',
+            'tone': 'Тональность',
+        }
+        help_texts = {
+            'keywords': 'Введите ключевые слова, разделенные запятыми',
+            'tone': 'Выберите общую тональность текстов автора',
         }
 
 
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ['title', 'content', 'theme', 'keywords']
+        fields = ['topic', 'content', 'niche', 'keywords', 'author']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Markdown text'}),
-            'keywords': forms.TextInput(attrs={'placeholder': 'Comma-separated keywords'}),
+            'topic': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 30}),
+            'niche': forms.TextInput(attrs={'class': 'form-control'}),
+            'keywords': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'title': 'Тема',
+            'content': 'Содержание',
+            'niche': 'Тематика',
+            'keywords': 'Ключевые слова',
+            'author': 'Автор',
+        }
+        help_texts = {
+            'keywords': 'Введите ключевые слова, разделенные запятыми',
         }
 
 
 class ContentGenerationForm(forms.Form):
-    theme = forms.CharField(
+    author_id = forms.IntegerField(widget=forms.HiddenInput())
+    niche = forms.CharField(
         label='Тематика',
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control'})
@@ -35,12 +63,17 @@ class ContentGenerationForm(forms.Form):
         max_length=200,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    length = forms.IntegerField(
+    word_count = forms.IntegerField(
         label='Объем текста (в словах)',
         min_value=100,
         max_value=2000,
         initial=500,
         widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    topic = forms.CharField(
+        label='Тема',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     def clean_keywords(self):

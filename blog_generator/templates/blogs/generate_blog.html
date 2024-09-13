@@ -1,7 +1,68 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Сгенерировать блог с ИИ{% endblock %}
 
 {% block content %}
-    {% include 'subtemplates/generation_form.html' with form=form%}
+    <div class="container mt-5 position-relative">
+        <h2 class="mb-3">Какой будет статья?</h2>
+
+        <div id="loadingIndicator"
+             class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75 d-none"
+             style="top: 0; left: 0; z-index: 1000;">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+                <p class="mt-2" id="loadingText">Генерация контента...</p>
+            </div>
+        </div>
+
+        <form id="generateForm" action="{% url 'generate_content' %}"
+              data-suggest-topics-action="{% url 'generate_topics' %}" method="post">
+            {% csrf_token %}
+            {{ form.author_id }}
+            {% for field in form %}
+                {% if field.name != 'topic' and field.name != 'author_id' %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="mb-3">
+                <label for="id_topic" class="form-label">Тема:</label>
+                <input type="text" class="form-control" id="id_topic" name="topic" required>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" id="suggestTopicsBtn" class="btn btn-outline-primary"><i class="fas fa-magic"></i>
+                    Подобрать актуальные темы используя ИИ
+                </button>
+            </div>
+
+            <div id="suggestedTopics" class="mb-3 d-none">
+                <h5>Предложенные темы:</h5>
+                <div id="topicsList" class="d-flex flex-wrap gap-2"></div>
+            </div>
+
+            <button type="submit" id="generateButton" class="btn btn-primary">Сгенерировать контент</button>
+        </form>
+
+        <div id="errorMessage" class="mt-3 alert alert-danger d-none"></div>
+    </div>
+{% endblock %}
+
+{% block include_js %}
+    <script src="{% static 'js/generate_content.js' %}"></script>
+    <script src="{% static 'js/suggest_topics.js' %}"></script>
 {% endblock %}

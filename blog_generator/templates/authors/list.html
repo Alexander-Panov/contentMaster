@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="mb-4">Авторские профили</h1>
+    <h1 class="mb-4">Выберите или создайте автора</h1>
     <div class="mb-5">
         <h2 class="mb-4">Пользовательские профили</h2>
         <div class="mb-4">
@@ -13,18 +13,22 @@
                     <div class="col">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h5 class="card-title">{{ profile.name }}</h5>
-                                <p class="card-text"><strong>Тематика:</strong> {{ profile.theme }}</p>
+                                <div class="card-title d-flex align-items-center gap-2">
+                                    <h5>{{ profile.name }}</h5>
+                                    <a href="{% url 'edit_author' profile.id %}" class="btn btn-sm btn-secondary"
+                                       title="Редактировать">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </div>
+
+                                <p class="card-text"><strong>Тематика:</strong> {{ profile.niche }}</p>
                                 <p class="card-text"><strong>Тональность:</strong> {{ profile.tone }}</p>
                             </div>
                             <div class="card-footer">
                                 <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
-                                <a href="{% url 'edit_author' profile.id %}" class="btn btn-sm btn-secondary"
-                                   title="Редактировать">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </a>
                             </div>
-                            <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+                            <a href="{% url 'select_author' profile.id %}" class="btn btn-success"
+                               title="Сгенерировать с ИИ">
                                 <i class="fas fa-robot"></i> Генерировать в стиле "{{ profile.name }}"
                             </a>
                         </div>
@@ -47,7 +51,8 @@
                         <div class="card-footer">
                             <a href="{% url 'author_detail' profile.id %}" class="btn btn-primary">Подробнее</a>
                         </div>
-                        <a href="" class="btn btn-success" title="Сгенерировать с ИИ">
+                        <a href="{% url 'select_author' profile.id %}" class="btn btn-success"
+                           title="Сгенерировать с ИИ">
                             <i class="fas fa-robot"></i> Генерировать в стиле "{{ profile.name }}"
                         </a>
                     </div>

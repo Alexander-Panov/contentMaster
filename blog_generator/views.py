@@ -7,9 +7,10 @@ from asgiref.sync import sync_to_async
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from .ai.generate_blog import generate_blog
-from .ai.generate_blog_mock import generate_blog_mock
+from .ai.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
 from .models import Author, CelebrityAuthor, ProfileAuthor, Blog
 from .forms import AuthorForm, BlogForm, ContentGenerationForm
 
@@ -19,7 +20,7 @@ def home(request):
     return render(request, 'home.html', {'form': form})
 
 
-def authors(request):
+def author_list(request):
     user_profiles = ProfileAuthor.objects.all().select_related('author')
     celebrities = CelebrityAuthor.objects.all().select_related('author')
     return render(request, 'authors/list.html', {'user_profiles': user_profiles, 'celebrities': celebrities})
@@ -28,6 +29,12 @@ def authors(request):
 def author_detail(request, author_id):
     author = get_object_or_404(Author, id=author_id)
     return render(request, 'authors/detail.html', {'author': author})
+
+
+def select_author(request, author_id):
+    author = Author.objects.get(id=author_id)
+    form = ContentGenerationForm(initial={'author_id': author.id})
+    return render(request, 'blogs/generate_blog.html', {'form': form})
 
 
 def create_or_edit_profile(request, profile_id=None):
@@ -72,6 +79,7 @@ def create_or_edit_blog(request, slug=None):
         # Проверяем, есть ли сгенерированные данные в сессии
         generated_data = request.session.pop('generated_blog_data', None)
         if generated_data and not blog:
+            generated_data['author'] = generated_data.pop('author_id')
             form = BlogForm(initial=generated_data)
         else:
             form = BlogForm(instance=blog)
@@ -79,38 +87,61 @@ def create_or_edit_blog(request, slug=None):
     return render(request, 'blogs/form.html', {'form': form, 'blog': blog})
 
 
-async def generate_content(request):
-    if request.method == 'POST':
-        form = ContentGenerationForm(request.POST)
-        if form.is_valid():
-            theme = form.cleaned_data['theme']
-            keywords = form.cleaned_data['keywords']
-            length = form.cleaned_data['length']
-            # Вызов асинхронной функции generate_blog
-            try:
-                # generated_content = await generate_blog(theme, keywords.split(','), length)
-                generated_content = await generate_blog_mock("theme", theme, keywords.split(','), length)
+@require_POST
+async def generate_topics(request):
+    form = ContentGenerationForm(request.POST)
+    form.is_valid()
+    if any(key in form.cleaned_data.keys() for key in ['niche', 'keywords', 'word_count']):
+        niche = form.cleaned_data['niche']
+        keywords = form.cleaned_data['keywords']
+        word_count = form.cleaned_data['word_count']
+        try:
+            topics = await generate_blog_topics_mock(niche, keywords.split(','), word_count)
 
-                # Создание нового блога с сгенерированным контентом
-
-                blog_data = {
-                    'title': f"Сгенерированная статья: {theme}",
-                    'content': generated_content,
-                    'theme': theme,
-                    'keywords': keywords,
-                }
-
-                def save_data_to_session():
-                    # Сохраняем данные в сессии
-                    request.session['generated_blog_data'] = blog_data
-
-                await sync_to_async(save_data_to_session)()
-
-                return JsonResponse({'success': True, 'redirect_url': reverse('create_blog')})
-            except Exception as e:
-                return JsonResponse({'success': False, 'error': str(e)})
+            return JsonResponse({'success': True, 'topics': topics})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
     else:
-        form = ContentGenerationForm()
+        return render(request, 'blogs/generate_blog.html', {'form': form, 'author': author})
+
+
+@require_POST
+async def generate_content(request):
+    form = ContentGenerationForm(request.POST)
+    if form.is_valid():
+        topic = form.cleaned_data['topic']
+        niche = form.cleaned_data['niche']
+        keywords = form.cleaned_data['keywords']
+        word_count = form.cleaned_data['word_count']
+        author_id = form.cleaned_data['author_id']
+        # Вызов асинхронной функции generate_blog
+        try:
+            def get_author(author_id):
+                # Сохраняем данные в сессии
+                return Author.objects.get(id=author_id)
+
+            author = await sync_to_async(get_author)(author_id)
+            # generated_content = await generate_blog(theme, keywords.split(','), length)
+            generated_content = await generate_blog_mock(niche, topic, keywords.split(','), word_count)
+
+            # Создание нового блога со сгенерированным контентом
+
+            blog_data = {
+                'topic': topic,
+                'content': generated_content,
+                'niche': niche,
+                'keywords': keywords,
+                'author_id': author_id,
+            }
+
+            def save_data_to_session():
+                # Сохраняем данные в сессии
+                request.session['generated_blog_data'] = blog_data
+
+            await sync_to_async(save_data_to_session)()
+
+            return JsonResponse({'success': True, 'redirect_url': reverse('create_blog')})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
 
     return render(request, 'blogs/generate_blog.html', {'form': form})
-

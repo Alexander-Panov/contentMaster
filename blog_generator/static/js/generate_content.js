@@ -4,13 +4,15 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('generateForm');
     const generateButton = document.getElementById('generateButton');
-    const loadingIndicator = document.getElementById('loadingIndicator');
     const errorMessage = document.getElementById('errorMessage');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const loadingText = document.getElementById('loadingText');
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         generateButton.disabled = true;
         loadingIndicator.classList.remove('d-none');
+        loadingText.textContent = 'Генерация контента...';
         errorMessage.classList.add('d-none');
 
         fetch(form.action, {
