@@ -10,7 +10,7 @@ from django.utils.text import slugify
 class Author(models.Model):
     name = models.CharField(max_length=255)
     bio = models.TextField()
-    keywords = models.TextField()  # Словарный запас
+    phrases = models.TextField()  # Словарный запас
     niche = models.CharField(max_length=255)
     tone = models.CharField(max_length=50, choices=[('formal', 'Formal'), ('informal', 'Informal')])
 

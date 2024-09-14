@@ -7,23 +7,23 @@ from .models import Author, Blog
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = ['name', 'bio', 'keywords', 'niche', 'tone']
+        fields = ['name', 'bio', 'phrases', 'niche', 'tone']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'keywords': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'phrases': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'niche': forms.TextInput(attrs={'class': 'form-control'}),
             'tone': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Имя автора',
             'bio': 'Биография',
-            'keywords': 'Ключевые слова',
+            'phrases': 'Ключевые слова',
             'niche': 'Тематика',
             'tone': 'Тональность',
         }
         help_texts = {
-            'keywords': 'Введите ключевые слова, разделенные запятыми',
+            'phrases': 'Введите ключевые слова, разделенные запятыми',
             'tone': 'Выберите общую тональность текстов автора',
         }
 

@@ -27,6 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEST = True  # Тестовый режим (вместо обращений к openai используются заглушки
 
 ALLOWED_HOSTS = []
 

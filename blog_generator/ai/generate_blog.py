@@ -1,6 +1,9 @@
 import asyncio
 
+from asgiref.sync import sync_to_async
 from openai import AsyncOpenAI
+
+from blog_generator.models import Author
 
 client = AsyncOpenAI()
 MODEL = "gpt-4o-mini"
@@ -47,31 +50,42 @@ async def generate_blog_topics(niche, keywords, word_count):
     return topics_text.split('\n')
 
 
-async def generate_blog(niche, topic, keywords, word_count):
+async def generate_blog(niche, topic, keywords, word_count, author: Author):
     """
-
     :param niche: тематика
     :param topic: название
     :param keywords: ключевые слова
     :param word_count: длина блога
+    :param author: информация об авторе (словарный запас, тональность, описание)
     :return:
     """
     # Define the prompt to guide ChatGPT in generating a blog post
-    system = f"You are an expert {niche} blog writer."
+    system = f"You are writing this blog post as {author.name}, who is an expert in {niche}. Your tone should be {author.tone}."
+
+    # Include the author's bio, vocabulary, and specialization
+    author_info = f"""
+    Author bio: {author.bio}
+    Vocabulary and phrases: {', '.join(author.phrases)}
+    Specialization: {author.niche}
+    """
+
+    # Main prompt for blog generation
     prompt = f"""    
-    Your task is to write a detailed blog post.
-    
+    Your task is to write a detailed blog post in the style of {author.name}.
+
     **Niche**: {niche}
     **Topic**: {topic}
     **Keywords**: {', '.join(keywords)}
     **Desired Length**: {word_count} words
 
     Guidelines:
-    1. Start with an engaging introduction that introduces the topic and hooks the reader.
-    2. Develop the content by expanding on the main points related to the keywords.
-    3. Use subheadings, bullet points, or numbered lists where appropriate to enhance readability.
-    4. Conclude with a summary and a call to action or thought-provoking question.
-    5. Ensure the content is well-structured, coherent, and formatted in Markdown.
+    1. Write in a style and tone consistent with the author's typical writing (Tone: {author.tone}).
+    2. Incorporate the author's vocabulary and phrases where appropriate (Vocabulary: {', '.join(author.phrases)}).
+    3. Start with an engaging introduction that introduces the topic and hooks the reader.
+    4. Develop the content by expanding on the main points related to the keywords.
+    5. Use subheadings, bullet points, or numbered lists where appropriate to enhance readability.
+    6. Conclude with a summary and a call to action or thought-provoking question.
+    7. Ensure the content is well-structured, coherent, and formatted in Markdown.
 
     Begin writing below:
     #{topic}
@@ -81,6 +95,7 @@ async def generate_blog(niche, topic, keywords, word_count):
         model=MODEL,
         messages=[
             {"role": "system", "content": system},
+            {"role": "user", "content": author_info},
             {"role": "user", "content": prompt},
         ],
         temperature=0.7,
@@ -101,8 +116,8 @@ async def main():
     keywords = ["AI", "blockchain", "cybersecurity", "machine learning", "IoT"]
     word_count = 150
 
-    blog_topics = await generate_blog_topics(niche, keywords, word_count)
-    print(blog_topics)
+    # blog_topics = await generate_blog_topics(niche, keywords, word_count)
+    # print(blog_topics)
 
     # Example usage
     niche = "Health"
@@ -110,7 +125,13 @@ async def main():
     keywords = ["health", "nutrition", "sustainability", "plant-based proteins", "recipes"]
     word_count = 800
 
-    blog_post = await generate_blog(niche, topic, keywords, word_count)
+    def get_author(author_id):
+        # Сохраняем данные в сессии
+        return Author.objects.get(id=author_id)
+
+    author = await sync_to_async(get_author)(14)
+
+    blog_post = await generate_blog(niche, topic, keywords, word_count, author)
     print(blog_post)
 
 

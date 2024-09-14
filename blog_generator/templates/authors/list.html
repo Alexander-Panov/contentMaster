@@ -13,7 +13,7 @@
                     <div class="col">
                         <div class="card h-100">
                             <div class="card-body">
-                                <div class="card-title d-flex align-items-center gap-2">
+                                <div class="card-title d-flex align-items-center justify-content-between gap-2">
                                     <h5>{{ profile.name }}</h5>
                                     <a href="{% url 'edit_author' profile.id %}" class="btn btn-sm btn-secondary"
                                        title="Редактировать">
@@ -45,7 +45,7 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">{{ profile.name }}</h5>
-                            <p class="card-text"><strong>Тематика:</strong> {{ profile.theme }}</p>
+                            <p class="card-text"><strong>Тематика:</strong> {{ profile.niche }}</p>
                             <p class="card-text"><strong>Тональность:</strong> {{ profile.tone }}</p>
                         </div>
                         <div class="card-footer">

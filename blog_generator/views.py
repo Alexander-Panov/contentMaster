@@ -2,13 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from asgiref.sync import sync_to_async
 
-# Create your views here.
-# blog_generator/views.py
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from contentMaster.settings import TEST
 from .ai.generate_blog import generate_blog
 from .ai.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
 from .models import Author, CelebrityAuthor, ProfileAuthor, Blog
@@ -21,8 +19,8 @@ def home(request):
 
 
 def author_list(request):
-    user_profiles = ProfileAuthor.objects.all().select_related('author')
-    celebrities = CelebrityAuthor.objects.all().select_related('author')
+    user_profiles = ProfileAuthor.objects.all().select_related('author').order_by('-author_id')
+    celebrities = CelebrityAuthor.objects.all().select_related('author').order_by('-author_id')
     return render(request, 'authors/list.html', {'user_profiles': user_profiles, 'celebrities': celebrities})
 
 
@@ -79,7 +77,6 @@ def create_or_edit_blog(request, slug=None):
         # Проверяем, есть ли сгенерированные данные в сессии
         generated_data = request.session.pop('generated_blog_data', None)
         if generated_data and not blog:
-            generated_data['author'] = generated_data.pop('author_id')
             form = BlogForm(initial=generated_data)
         else:
             form = BlogForm(instance=blog)
@@ -96,13 +93,15 @@ async def generate_topics(request):
         keywords = form.cleaned_data['keywords']
         word_count = form.cleaned_data['word_count']
         try:
-            topics = await generate_blog_topics_mock(niche, keywords.split(','), word_count)
+            if TEST:
+                generate_blog_topics = generate_blog_topics_mock
+            topics = await generate_blog_topics(niche, keywords.split(','), word_count)
 
             return JsonResponse({'success': True, 'topics': topics})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     else:
-        return render(request, 'blogs/generate_blog.html', {'form': form, 'author': author})
+        return render(request, 'blogs/generate_blog.html', {'form': form})
 
 
 @require_POST
@@ -121,8 +120,11 @@ async def generate_content(request):
                 return Author.objects.get(id=author_id)
 
             author = await sync_to_async(get_author)(author_id)
-            # generated_content = await generate_blog(theme, keywords.split(','), length)
-            generated_content = await generate_blog_mock(niche, topic, keywords.split(','), word_count)
+
+            if not TEST:
+                generated_content = await generate_blog(niche, topic, keywords.split(','), word_count, author)
+            else:
+                generated_content = await generate_blog_mock(niche, topic, keywords.split(','), word_count, author)
 
             # Создание нового блога со сгенерированным контентом
 
@@ -131,7 +133,7 @@ async def generate_content(request):
                 'content': generated_content,
                 'niche': niche,
                 'keywords': keywords,
-                'author_id': author_id,
+                'author': author_id,
             }
 
             def save_data_to_session():
