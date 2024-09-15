@@ -1,10 +1,7 @@
 .idea
 .venv
-.env
 
-db.sqlite3
-CREDENTIALS.md
 
-/task
-/blog_generator/static/bootstrap
-/blog_generator/fixtures/
+/LOCAL.md
+/task/Отборочный ИИ.pdf
+/.env

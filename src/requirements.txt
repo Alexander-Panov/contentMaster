@@ -1,0 +1,7 @@
+Django~=5.1.1
+python-dotenv~=1.0.1
+asgiref~=3.8.1
+openai~=1.44.1
+Markdown~=3.7
+psycopg2-binary~=2.9.9
+uwsgi~=2.0.26

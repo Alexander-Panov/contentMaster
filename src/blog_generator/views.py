@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from contentMaster.settings import TEST
+from django.conf import settings
 from .ai.generate_blog import generate_blog
 from .ai.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
 from .models import Author, CelebrityAuthor, ProfileAuthor, Blog
@@ -93,8 +93,9 @@ async def generate_topics(request):
         keywords = form.cleaned_data['keywords']
         word_count = form.cleaned_data['word_count']
         try:
-            if TEST:
+            if settings.TEST:
                 generate_blog_topics = generate_blog_topics_mock
+            # noinspection PyUnboundLocalVariable
             topics = await generate_blog_topics(niche, keywords.split(','), word_count)
 
             return JsonResponse({'success': True, 'topics': topics})
@@ -121,10 +122,11 @@ async def generate_content(request):
 
             author = await sync_to_async(get_author)(author_id)
 
-            if not TEST:
-                generated_content = await generate_blog(niche, topic, keywords.split(','), word_count, author)
-            else:
-                generated_content = await generate_blog_mock(niche, topic, keywords.split(','), word_count, author)
+            if settings.TEST:
+                generate_blog = generate_blog_mock
+
+            # noinspection PyUnboundLocalVariable
+            generated_content = await generate_blog(niche, topic, keywords.split(','), word_count, author)
 
             # Создание нового блога со сгенерированным контентом
 
