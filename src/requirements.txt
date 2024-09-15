@@ -5,3 +5,4 @@ openai~=1.44.1
 Markdown~=3.7
 psycopg2-binary~=2.9.9
 uwsgi~=2.0.26
+pytils~=0.4.1

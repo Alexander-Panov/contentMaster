@@ -1,7 +1,7 @@
 from .base import *
 
 DEBUG = True
-TEST = True  # Тестовый режим (вместо обращений к openai используются заглушки
+TEST = False  # Тестовый режим (вместо обращений к openai используются заглушки
 
 DATABASES = {
     'default': {

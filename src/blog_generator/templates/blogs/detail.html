@@ -9,6 +9,9 @@
 
 
         <h1>{{ blog.topic }}</h1>
+        <button id="copyButton" class="btn btn-sm btn-outline-secondary" title="Копировать содержимое">
+            <i class="bi bi-clipboard"></i>
+        </button>
         <a href="{% url 'edit_blog' blog.slug %}" class="btn btn-sm btn-secondary" title="Редактировать">
             <i class="fas fa-pencil-alt"></i>
         </a>
@@ -25,9 +28,47 @@
 
 
 
-    <div class="mb-4">
+    <div id="blogContent" class="mb-4">
         {{ blog.content|markdown }}
     </div>
 
 
+{% endblock %}
+
+{% block include_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const copyButton = document.getElementById('copyButton');
+    const blogContent = document.getElementById('blogContent');
+
+    copyButton.addEventListener('click', function() {
+        // Создаем временный элемент textarea
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = blogContent.innerText;
+        document.body.appendChild(tempTextArea);
+
+        // Выбираем текст
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999); // Для мобильных устройств
+
+        // Копируем текст
+        document.execCommand('copy');
+
+        // Удаляем временный элемент
+        document.body.removeChild(tempTextArea);
+
+        // Изменяем иконку и текст кнопки для обратной связи
+        copyButton.innerHTML = '<i class="bi bi-check"></i> Скопировано';
+        copyButton.classList.add('btn-success');
+        copyButton.classList.remove('btn-outline-secondary');
+
+        // Возвращаем исходный вид кнопки через 2 секунды
+        setTimeout(() => {
+            copyButton.innerHTML = '<i class="bi bi-clipboard"></i>';
+            copyButton.classList.remove('btn-success');
+            copyButton.classList.add('btn-outline-secondary');
+        }, 2000);
+    });
+});
+</script>
 {% endblock %}

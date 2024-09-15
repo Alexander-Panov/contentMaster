@@ -3,7 +3,7 @@ import asyncio
 from blog_generator.models import Author
 
 
-async def generate_blog_topics_mock(niche, keywords, word_count):
+async def generate_blog_topics_mock(niche, keywords, word_count, language_model, language, style):
     await asyncio.sleep(3)
     return ['The Role of AI in Enhancing Cybersecurity Measures for Businesses',
             'Exploring Blockchain Technology: Beyond Cryptocurrencies and NFTs',
@@ -22,7 +22,7 @@ async def generate_blog_topics_mock(niche, keywords, word_count):
             'Emerging Trends in Cybersecurity: What to Expect in the Next Five Years']
 
 
-async def generate_blog_mock(niche, topic, keywords, word_count, author: Author):
+async def generate_blog_mock(niche, topic, keywords, word_count, author: Author, language_model, language, style):
     await asyncio.sleep(3)
     return """
     In recent years, the plant-based diet has surged in popularity, captivating health enthusiasts and environmental advocates alike. What started as a niche lifestyle choice has transformed into a mainstream movement, with restaurants and supermarkets expanding their offerings to include an array of plant-based options. But what exactly is driving this trend? Is it merely a fad, or does a plant-based diet offer real benefits for our health, nutrition, and the planet? Let’s explore the compelling reasons to embrace this vibrant way of eating.

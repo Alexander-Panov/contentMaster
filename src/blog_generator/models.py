@@ -4,7 +4,7 @@ from django.db import models
 # blog_generator/models.py
 
 from django.db import models
-from django.utils.text import slugify
+from pytils.translit import slugify
 
 
 class Author(models.Model):
@@ -12,7 +12,7 @@ class Author(models.Model):
     bio = models.TextField()
     phrases = models.TextField()  # Словарный запас
     niche = models.CharField(max_length=255)
-    tone = models.CharField(max_length=50, choices=[('formal', 'Formal'), ('informal', 'Informal')])
+    tone = models.CharField(max_length=50, choices=[('formal', 'Формальный'), ('informal', 'Не формальный')])
 
     def __str__(self):
         return self.name

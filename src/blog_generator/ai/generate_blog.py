@@ -6,10 +6,9 @@ from openai import AsyncOpenAI
 from blog_generator.models import Author
 
 client = AsyncOpenAI(base_url="https://api.vsegpt.ru/v1")
-MODEL = "openai/gpt-4o-mini"
 
 
-async def generate_blog_topics(niche, keywords, word_count):
+async def generate_blog_topics(niche, keywords, word_count, language_model, language, style):
     # Define the prompt to guide ChatGPT in generating a list of trending blog topics
     system = f"You are an expert content strategist."
 
@@ -19,20 +18,24 @@ async def generate_blog_topics(niche, keywords, word_count):
     **Niche**: {niche}
     **Keywords**: {', '.join(keywords)}
     **Desired Length**: {word_count} words
+    **Language**: {language}
+    **Style**: {style}
 
     Guidelines:
     1. Analyze the given niche and keywords to understand the target audience and popular interests.
     2. Generate a list of 10 to 15 blog topics that are trending and relevant to the niche.
     3. Ensure each topic is unique, specific, and has potential for high engagement.
     4. Avoid general topics; instead, focus on niche-specific and innovative ideas that stand out.
-    5. Format the output as a list of raw topics, each one starts on a new line.
+    5. Format the output as plain text where each topic starts on a new line, and only a single line break (\\n) is used between topics.
 
-    Provide the list of blog topics below:
+    Generate the topics in {language} and write in a {style}.
+
+    Provide the list of blog topics below, each one on a new line:
     """
 
     # Generate the blog topics using ChatGPT API
     response = await client.chat.completions.create(
-        model=MODEL,
+        model=language_model,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": prompt},
@@ -46,12 +49,12 @@ async def generate_blog_topics(niche, keywords, word_count):
 
     # Extract the generated text
     topics_text = response.choices[0].message.content.strip()
-
+    topics = topics_text.replace('\n\n', '\n').strip().split('\n')
     # Return the list of blog topics
-    return topics_text.split('\n')
+    return [topic.strip() for topic in topics]
 
 
-async def generate_blog(niche, topic, keywords, word_count, author: Author):
+async def generate_blog(niche, topic, keywords, word_count, author: Author, language_model, language, style):
     """
     :param niche: тематика
     :param topic: название
@@ -61,7 +64,7 @@ async def generate_blog(niche, topic, keywords, word_count, author: Author):
     :return:
     """
     # Define the prompt to guide ChatGPT in generating a blog post
-    system = f"You are writing this blog post as {author.name}, who is an expert in {niche}. Your tone should be {author.tone}."
+    system = f"You are writing this blog post as {author.name}, who is an expert in {niche}. Your tone should be {author.tone}, and the blog should be written in {language} in a {style} style"
 
     # Include the author's bio, vocabulary, and specialization
     author_info = f"""
@@ -78,9 +81,11 @@ async def generate_blog(niche, topic, keywords, word_count, author: Author):
     **Topic**: {topic}
     **Keywords**: {', '.join(keywords)}
     **Desired Length**: {word_count} words
+    **Language**: {language}
+    **Style**: {style}
 
     Guidelines:
-    1. Write in a style and tone consistent with the author's typical writing (Tone: {author.tone}).
+    1. Write in a style and tone consistent with the author's typical writing (Tone: {author.tone}, Style: {style}).
     2. Incorporate the author's vocabulary and phrases where appropriate (Vocabulary: {', '.join(author.phrases)}).
     3. Start with an engaging introduction that introduces the topic and hooks the reader.
     4. Develop the content by expanding on the main points related to the keywords.
@@ -89,11 +94,11 @@ async def generate_blog(niche, topic, keywords, word_count, author: Author):
     7. Ensure the content is well-structured, coherent, and formatted in Markdown.
 
     Begin writing below:
-    #{topic}
+    # {topic}
     """
 
     response = await client.chat.completions.create(
-        model=MODEL,
+        model=language_model,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": author_info},
@@ -107,7 +112,7 @@ async def generate_blog(niche, topic, keywords, word_count, author: Author):
     )
 
     # Extract the generated text
-    blog_text = response.choices[0].message.content.strip()
+    blog_text = response.choices[0].message.content.replace(f"# {topic}", '').strip()
 
     return blog_text
 

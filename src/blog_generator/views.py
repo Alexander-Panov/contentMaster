@@ -7,7 +7,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from django.conf import settings
-from .ai.generate_blog import generate_blog
+
+from .ai.blog_configs import MODELS, LANGUAGES, STYLES
+from .ai.generate_blog import generate_blog_topics, generate_blog
 from .ai.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
 from .models import Author, CelebrityAuthor, ProfileAuthor, Blog
 from .forms import AuthorForm, BlogForm, ContentGenerationForm
@@ -44,8 +46,9 @@ def create_or_edit_profile(request, profile_id=None):
     if request.method == 'POST':
         form = AuthorForm(request.POST, instance=profile)
         if form.is_valid():
-            form.save()
-            return redirect('author_detail', profile_id)
+            profile = form.save()
+            ProfileAuthor.objects.create(author=profile)
+            return redirect('author_detail', profile.id)
     else:
         form = AuthorForm(instance=profile)
 
@@ -88,15 +91,24 @@ def create_or_edit_blog(request, slug=None):
 async def generate_topics(request):
     form = ContentGenerationForm(request.POST)
     form.is_valid()
-    if any(key in form.cleaned_data.keys() for key in ['niche', 'keywords', 'word_count']):
+    if any(key in form.cleaned_data.keys() for key in
+           ['niche', 'keywords', 'word_count', 'language_model', 'language', 'style']):
         niche = form.cleaned_data['niche']
         keywords = form.cleaned_data['keywords']
         word_count = form.cleaned_data['word_count']
+
+        language_model = form.cleaned_data['language_model']
+        language = form.cleaned_data['language']
+        style = form.cleaned_data['style']
         try:
             if settings.TEST:
-                generate_blog_topics = generate_blog_topics_mock
+                generate_blog_topics_function = generate_blog_topics_mock
+            else:
+                generate_blog_topics_function = generate_blog_topics
             # noinspection PyUnboundLocalVariable
-            topics = await generate_blog_topics(niche, keywords.split(','), word_count)
+            topics = await generate_blog_topics_function(niche, keywords.split(','), word_count, language_model,
+                                                         language,
+                                                         style)
 
             return JsonResponse({'success': True, 'topics': topics})
         except Exception as e:
@@ -114,6 +126,11 @@ async def generate_content(request):
         keywords = form.cleaned_data['keywords']
         word_count = form.cleaned_data['word_count']
         author_id = form.cleaned_data['author_id']
+
+        language_model = form.cleaned_data['language_model']
+        language = form.cleaned_data['language']
+        style = form.cleaned_data['style']
+
         # Вызов асинхронной функции generate_blog
         try:
             def get_author(author_id):
@@ -123,24 +140,25 @@ async def generate_content(request):
             author = await sync_to_async(get_author)(author_id)
 
             if settings.TEST:
-                generate_blog = generate_blog_mock
+                generate_blog_function = generate_blog_mock
+            else:
+                generate_blog_function = generate_blog
 
-            # noinspection PyUnboundLocalVariable
-            generated_content = await generate_blog(niche, topic, keywords.split(','), word_count, author)
+            generated_content = await generate_blog_function(niche, topic, keywords.split(','), word_count, author,
+                                                             language_model,
+                                                             language,
+                                                             style)
 
             # Создание нового блога со сгенерированным контентом
-
-            blog_data = {
-                'topic': topic,
-                'content': generated_content,
-                'niche': niche,
-                'keywords': keywords,
-                'author': author_id,
-            }
-
             def save_data_to_session():
                 # Сохраняем данные в сессии
-                request.session['generated_blog_data'] = blog_data
+                request.session['generated_blog_data'] = {
+                    'topic': topic,
+                    'content': generated_content,
+                    'niche': niche,
+                    'keywords': keywords,
+                    'author': author_id,
+                }
 
             await sync_to_async(save_data_to_session)()
 
@@ -148,4 +166,7 @@ async def generate_content(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
-    return render(request, 'blogs/generate_blog.html', {'form': form})
+    return render(request, 'blogs/generate_blog.html', {'form': form,
+                                                        'models': MODELS,
+                                                        'languages': LANGUAGES,
+                                                        'styles': STYLES})

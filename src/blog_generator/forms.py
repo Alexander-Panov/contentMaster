@@ -1,6 +1,8 @@
 # blog_generator/forms.py
 
 from django import forms
+
+from .ai.blog_configs import MODELS, LANGUAGES, STYLES
 from .models import Author, Blog
 
 
@@ -40,7 +42,7 @@ class BlogForm(forms.ModelForm):
             'author': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
-            'title': 'Тема',
+            'topic': 'Тема',
             'content': 'Содержание',
             'niche': 'Тематика',
             'keywords': 'Ключевые слова',
@@ -74,6 +76,24 @@ class ContentGenerationForm(forms.Form):
         label='Тема',
         max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    language_model = forms.ChoiceField(
+        label='Языковая модель',
+        choices=[(model, model) for model in MODELS],
+        initial='openai/gpt-4o-mini',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    language = forms.ChoiceField(
+        label='Язык',
+        choices=LANGUAGES,
+        initial='russian',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    style = forms.ChoiceField(
+        label='Стиль',
+        choices=STYLES,
+        initial='none',
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     def clean_keywords(self):
