@@ -5,8 +5,8 @@ from openai import AsyncOpenAI
 
 from blog_generator.models import Author
 
-client = AsyncOpenAI()
-MODEL = "gpt-4o-mini"
+client = AsyncOpenAI(base_url="https://api.vsegpt.ru/v1")
+MODEL = "openai/gpt-4o-mini"
 
 
 async def generate_blog_topics(niche, keywords, word_count):
@@ -40,7 +40,8 @@ async def generate_blog_topics(niche, keywords, word_count):
         temperature=0.8,
         top_p=0.9,
         frequency_penalty=0.5,
-        presence_penalty=0.3
+        presence_penalty=0.3,
+        extra_headers={"X-Title": "ContentMaster"}
     )
 
     # Extract the generated text
@@ -101,7 +102,8 @@ async def generate_blog(niche, topic, keywords, word_count, author: Author):
         temperature=0.7,
         top_p=0.9,
         frequency_penalty=0.5,
-        presence_penalty=0.3
+        presence_penalty=0.3,
+        extra_headers={"X-Title": "ContentMaster"}
     )
 
     # Extract the generated text

@@ -20,6 +20,11 @@ services:
       - web
     volumes_from:
       - web
+    volumes:
+#       - /etc/letsencrypt/live/contentmaster.twc1.net/:/etc
+      - /etc/nginx/cert.pem:/etc/cert.pem
+      - /etc/nginx/key.pem:/etc/key.pem
+#      - /etc/nginx:/etc
     ports:
       - "80:80"
       - "443:443"
@@ -31,8 +36,6 @@ services:
     restart: always
     volumes:
       - ./config:/opt/conf
-#      - ./src:/content_master
-#      - ./src/static:/content_master/static
       - static-data:/content_master/static
     expose:
       - "3000"
