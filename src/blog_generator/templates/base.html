@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark text-white">
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">КонтентМастер</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -30,9 +30,50 @@
     </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container my-4">
     {% block content %}{% endblock %}
 </div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Контент Мастер</h5>
+                <p>Создавайте уникальный контент с помощью искусственного интеллекта</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Ссылки</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white">О нас</a></li>
+                    <li><a href="#" class="text-white">Блог</a></li>
+                    <li><a href="#" class="text-white">Политика конфиденциальности</a></li>
+                    <li><a href="#" class="text-white">Условия использования</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Контакты</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-envelope me-2"></i> info@contentmaster.ru</li>
+                    <li><i class="fas fa-phone me-2"></i> +7 (999) 123-45-67</li>
+                    <li><i class="fas fa-map-marker-alt me-2"></i> Москва, Россия</li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <p>&copy; 2024 Контент Мастер. Все права защищены.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script src="{% static '/bootstrap/js/bootstrap.js' %}"></script>
 {% block include_js %}

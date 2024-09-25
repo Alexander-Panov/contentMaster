@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 from asgiref.sync import sync_to_async
 from openai import AsyncOpenAI
@@ -6,6 +7,9 @@ from openai import AsyncOpenAI
 from blog_generator.models import Author
 
 client = AsyncOpenAI(base_url="https://api.vsegpt.ru/v1")
+
+def clear_numeration(theme: str) -> str:
+    return re.sub(r'^\d+\.\s*', '', theme)
 
 
 async def generate_blog_topics(niche, keywords, word_count, language_model, language, style):
@@ -51,7 +55,7 @@ async def generate_blog_topics(niche, keywords, word_count, language_model, lang
     topics_text = response.choices[0].message.content.strip()
     topics = topics_text.replace('\n\n', '\n').strip().split('\n')
     # Return the list of blog topics
-    return [topic.strip() for topic in topics]
+    return [clear_numeration(topic.strip()).strip() for topic in topics]
 
 
 async def generate_blog(niche, topic, keywords, word_count, author: Author, language_model, language, style):

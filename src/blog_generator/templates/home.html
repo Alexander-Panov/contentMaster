@@ -2,57 +2,154 @@
 {% load static %}
 
 {% block content %}
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="display-4">Добро пожаловать в КонтентМастер</h1>
-                <p class="lead">Создавайте уникальный контент с помощью искусственного интеллекта</p>
-                <hr class="my-4">
-                <p>КонтентМастер использует передовые технологии ИИ для генерации высококачественных статей на любую
-                    тему.</p>
-                <a class="btn btn-primary btn-lg" href="{% url 'author_list' %}" role="button">Начать генерацию</a>
-            </div>
-            <div class="col-md-6">
-                <img src="{% static 'img/ai-assistant.gif' %}" alt="AI Writing" class="img-fluid">
-            </div>
-        </div>
-
-        <div class="row mt-5">
-            <div class="col-md-4">
-                <h3>Быстро</h3>
-                <p>Генерируйте статьи за считанные минуты, экономя время на исследованиях и написании.</p>
-            </div>
-            <div class="col-md-4">
-                <h3>Уникально</h3>
-                <p>Каждая статья создается с нуля, обеспечивая оригинальность и уникальность контента.</p>
-            </div>
-            <div class="col-md-4">
-                <h3>Настраиваемо</h3>
-                <p>Выбирайте тематику, стиль и тон для создания идеального контента для вашей аудитории.</p>
+    <!-- Hero Section -->
+    <section class="hero py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1 class="display-4 mb-3">Создавайте контент с КонтентМастер</h1>
+                    <p class="lead mb-4">Ваш личный помощник для генерации уникальных статей с использованием
+                        искусственного интеллекта. Выберите стиль, задайте тему, и получите готовый текст за считанные
+                        минуты!</p>
+                    <a href="{% url 'author_list' %}" class="btn btn-primary btn-lg">Начать генерацию</a>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{% static 'img/ai-assistant.gif' %}" alt="AI Writing" class="img-fluid rounded shadow">
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="row mt-5">
-            <h1 class="mb-3">Как это работает</h1>
-            <div class="col-md-6">
-                <h4>Сценарий 1: Генерация с выбором автора</h4>
-                <ol>
-                    <li>Выберите существующий или создайте новый профиль автора</li>
-                    <li>Укажите тематику, ключевые слова и желаемый объем текста</li>
-                    <li>Наш ИИ подберет актуальные темы и соберет материалы</li>
-                    <li>Получите готовую статью, которую можно сохранить и отредактировать</li>
-                </ol>
-            </div>
-            <div class="col-md-6">
-                <h4>Сценарий 2: Генерация в стиле известной личности</h4>
-                <ol>
-                    <li>Выберите известную личность из предложенного списка</li>
-                    <li>Укажите тему для статьи</li>
-                    <li>Наш ИИ сгенерирует текст, имитируя стиль выбранного автора</li>
-                    <li>Получите готовую статью, которую можно сохранить и отредактировать</li>
-                </ol>
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Возможности Контент Мастера</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">ИИ-генерация</h3>
+                            <p class="card-text">Используйте передовые технологии ИИ для создания высококачественного
+                                контента</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user-tie fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Стиль известных личностей</h3>
+                            <p class="card-text">Генерируйте статьи, имитируя стиль популярных авторов и
+                                знаменитостей</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-sliders-h fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Настраиваемые параметры</h3>
+                            <p class="card-text">Выбирайте тематику, ключевые слова и объем текста для идеального
+                                результата</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Как это работает</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">Сценарий 1: Генерация с выбором автора</h3>
+                            <ol>
+                                <li>Выберите существующий или создайте новый профиль автора</li>
+                                <li>Укажите тематику, ключевые слова и желаемый объем текста</li>
+                                <li>Наш ИИ подберет актуальные темы и соберет материалы</li>
+                                <li>Получите готовую статью, которую можно сохранить и отредактировать</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">Сценарий 2: Генерация в стиле известной личности</h3>
+                            <ol>
+                                <li>Выберите известную личность из предложенного списка</li>
+                                <li>Укажите тему для статьи</li>
+                                <li>Наш ИИ сгенерирует текст, имитируя стиль выбранного автора</li>
+                                <li>Получите готовую статью, которую можно сохранить и отредактировать</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Что говорят наши пользователи</h2>
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p class="card-text">"Контент Мастер полностью изменил мой подход к созданию
+                                    контента. Теперь я могу генерировать уникальные статьи в стиле моих любимых
+                                    авторов за считанные минуты!"</p>
+                                <footer class="blockquote-footer">Анна С., блогер</footer>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p class="card-text">"Как маркетолог, я всегда ищу новые способы создания
+                                    интересного контента. Контент Мастер стал незаменимым инструментом в моей
+                                    работе!"</p>
+                                <footer class="blockquote-footer">Иван П., digital-маркетолог</footer>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p class="card-text">"Потрясающее приложение! Я могу создавать разнообразный контент
+                                    для своих клиентов, экономя время и сохраняя высокое качество."</p>
+                                <footer class="blockquote-footer">Мария Д., копирайтер</footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Предыдущий</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Следующий</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cta" class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Готовы создать свой уникальный контент?</h2>
+            <p class="lead mb-4">Попробуйте КонтентМастер прямо сейчас и откройте для себя новые возможности в создании
+                контента!</p>
+            <a href="{% url 'author_list' %}" class="btn btn-light btn-lg">Начать бесплатно</a>
+        </div>
+    </section>
 {% endblock %}
