@@ -1,7 +1,10 @@
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+
+from contentMaster.settings.base import NLTK_DATA
+
 
 def word_statistics(text: str) -> int:
     return len(text.split())
@@ -11,10 +14,11 @@ def symbol_statistics(text: str) -> int:
     return len(text)
 
 
-def keywords_statistics(text: str, lang="english") -> dict[str: int]:
-    nltk.download('punkt_tab')
-    nltk.download("stopwords")
+nltk.download('punkt_tab', download_dir=NLTK_DATA)
+nltk.download("stopwords", download_dir=NLTK_DATA)
 
+
+def keywords_statistics(text: str, lang="english") -> dict[str: int]:
     """ Возвращает словарь наиболее встречающихся ключевых слов с их частотой использования """
     # Создание объекта TfidfVectorizer
     tfidf_vectorizer = TfidfVectorizer()

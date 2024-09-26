@@ -1,6 +1,5 @@
 #!/bin/sh
 
-python manage.py makemigrations
 python manage.py migrate
 
 # collects all static files in our app and puts it in the STATIC_ROOT
