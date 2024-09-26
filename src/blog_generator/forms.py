@@ -2,7 +2,7 @@
 
 from django import forms
 
-from .ai.blog_configs import MODELS, LANGUAGES, STYLES
+from .blog.blog_configs import MODELS, LANGUAGES, STYLES
 from .models import Author, Blog
 
 
@@ -33,23 +33,22 @@ class AuthorForm(forms.ModelForm):
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ['topic', 'content', 'niche', 'keywords', 'author']
+        fields = ['topic', 'niche', 'content', 'language', 'author']
         widgets = {
             'topic': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 30}),
             'niche': forms.TextInput(attrs={'class': 'form-control'}),
-            'keywords': forms.TextInput(attrs={'class': 'form-control'}),
+            'language': forms.Select(attrs={'class': 'form-control'}),
             'author': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'topic': 'Тема',
-            'content': 'Содержание',
             'niche': 'Тематика',
-            'keywords': 'Ключевые слова',
+            'content': 'Содержание',
+            'language': 'Язык',
             'author': 'Автор',
         }
         help_texts = {
-            'keywords': 'Введите ключевые слова, разделенные запятыми',
         }
 
 

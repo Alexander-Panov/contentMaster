@@ -8,9 +8,10 @@ from django.views.decorators.http import require_POST
 
 from django.conf import settings
 
-from .ai.blog_configs import MODELS, LANGUAGES, STYLES
-from .ai.generate_blog import generate_blog_topics, generate_blog
-from .ai.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
+from .blog.blog_configs import MODELS, LANGUAGES, STYLES
+from .blog.generate_blog import generate_blog_topics, generate_blog
+from .blog.generate_blog_mock import generate_blog_mock, generate_blog_topics_mock
+from .blog.utils import clear_markdown, word_statistics, symbol_statistics, keywords_statistics
 from .models import Author, CelebrityAuthor, ProfileAuthor, Blog
 from .forms import AuthorForm, BlogForm, ContentGenerationForm
 
@@ -77,12 +78,7 @@ def create_or_edit_blog(request, slug=None):
             blog = form.save()
             return redirect('blog_detail', slug=blog.slug)
     else:
-        # Проверяем, есть ли сгенерированные данные в сессии
-        generated_data = request.session.pop('generated_blog_data', None)
-        if generated_data and not blog:
-            form = BlogForm(initial=generated_data)
-        else:
-            form = BlogForm(instance=blog)
+        form = BlogForm(instance=blog)
 
     return render(request, 'blogs/form.html', {'form': form, 'blog': blog})
 
@@ -126,18 +122,13 @@ async def generate_content(request):
         keywords = form.cleaned_data['keywords']
         word_count = form.cleaned_data['word_count']
         author_id = form.cleaned_data['author_id']
-
         language_model = form.cleaned_data['language_model']
         language = form.cleaned_data['language']
         style = form.cleaned_data['style']
 
         # Вызов асинхронной функции generate_blog
         try:
-            def get_author(author_id):
-                # Сохраняем данные в сессии
-                return Author.objects.get(id=author_id)
-
-            author = await sync_to_async(get_author)(author_id)
+            author = await sync_to_async(Author.objects.get)(id=author_id)
 
             if settings.TEST:
                 generate_blog_function = generate_blog_mock
@@ -150,19 +141,15 @@ async def generate_content(request):
                                                              style)
 
             # Создание нового блога со сгенерированным контентом
-            def save_data_to_session():
-                # Сохраняем данные в сессии
-                request.session['generated_blog_data'] = {
-                    'topic': topic,
-                    'content': generated_content,
-                    'niche': niche,
-                    'keywords': keywords,
-                    'author': author_id,
-                }
+            new_blog = await sync_to_async(Blog.objects.create)(
+                topic=topic,
+                author=author,
+                content=generated_content,
+                niche=niche,
+                language=language
+            )
 
-            await sync_to_async(save_data_to_session)()
-
-            return JsonResponse({'success': True, 'redirect_url': reverse('create_blog')})
+            return JsonResponse({'success': True, 'redirect_url': reverse('blog_detail', args=[new_blog.slug])})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
 
@@ -170,3 +157,16 @@ async def generate_content(request):
                                                         'models': MODELS,
                                                         'languages': LANGUAGES,
                                                         'styles': STYLES})
+
+
+def blog_analytics(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+    cleared_content = clear_markdown(blog.content)
+
+    analytics = {
+        'word_count': word_statistics(cleared_content),
+        'symbol_count': symbol_statistics(cleared_content),
+        'keywords': keywords_statistics(cleared_content, lang=blog.language)
+    }
+
+    return JsonResponse(analytics)

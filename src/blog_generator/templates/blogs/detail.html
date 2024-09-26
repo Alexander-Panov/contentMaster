@@ -1,74 +1,99 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load blog_tags %}
 
 {% block title %}{{ blog.topic }}{% endblock %}
 
 {% block content %}
-    <div class="d-flex align-items-center gap-3 mb-2">
-        <a href="{% url 'blog_list' %}" class="btn btn-primary" title="Назад"><i class="fas fa-arrow-left"></i></a>
+    {#    <div class="card mb-4">#}
+    {#        <div class="card-body">#}
+    {#            <div class="d-flex justify-content-between align-items-center gap-3 mb-3">#}
+    {#                <a href="{% url 'blog_list' %}" class="btn btn-primary" title="Назад"><i class="fas fa-arrow-left"></i></a>#}
+    {#                <h1 class="card-title mb-0">{{ blog.topic }}</h1>#}
+    {#                <button id="copyButton" class="btn btn-sm btn-outline-secondary" title="Копировать содержимое">#}
+    {#                    <i class="bi bi-clipboard"></i>#}
+    {#                </button>#}
+    {#                <a href="{% url 'edit_blog' blog.slug %}" class="btn btn-sm btn-secondary" title="Редактировать">#}
+    {#                    <i class="fas fa-pencil-alt"></i>#}
+    {#                </a>#}
+    {#                <button id="showAnalytics" class="btn btn-primary mb-4" data-bs-toggle="modal"#}
+    {#                        data-bs-target="#analyticsModal">Показать аналитику статьи#}
+    {#                </button>#}
+    {#            </div>#}
+    {#            <p class="card-subtitle mb-2 text-muted">#}
+    {#                <i class="fas fa-folder-open me-2"></i>{{ blog.niche }}#}
+    {#                <i class="fas fa-calendar-alt ms-3 me-2"></i>{{ blog.created_at|date:"d F Y" }}#}
+    {#                <i class="fas fa-user ms-3 me-2"></i>В стиле "{{ blog.author.name }}"#}
+    {#            </p>#}
+    {#        </div>#}
+    {#    </div>#}
 
-
-        <h1>{{ blog.topic }}</h1>
-        <button id="copyButton" class="btn btn-sm btn-outline-secondary" title="Копировать содержимое">
-            <i class="bi bi-clipboard"></i>
-        </button>
-        <a href="{% url 'edit_blog' blog.slug %}" class="btn btn-sm btn-secondary" title="Редактировать">
-            <i class="fas fa-pencil-alt"></i>
-        </a>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
+                <a href="{% url 'blog_list' %}" class="btn btn-outline-primary me-3" title="Назад к списку">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="card-title mb-0">{{ blog.topic }}</h1>
+                    <p class="card-subtitle mt-1 text-muted">
+                        <i class="fas fa-folder-open me-2"></i>{{ blog.niche }}
+                        <i class="fas fa-calendar-alt ms-3 me-2"></i>{{ blog.created_at|date:"d F Y" }}
+                        <i class="fas fa-user ms-3 me-2"></i>В стиле "{{ blog.author.name }}"
+                        <i class="fas fa-language ms-3 me-2"></i>Язык {{ blog.language.upper|slice:":2" }}
+                    </p>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <button id="copyButton" class="btn btn-outline-secondary" title="Копировать содержимое">
+                        <i class="fas fa-clipboard"></i>
+                    </button>
+                    <a href="{% url 'edit_blog' blog.slug %}" class="btn btn-outline-secondary" title="Редактировать">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <button id="showAnalytics" class="btn btn-outline-info" data-bs-toggle="modal"
+                            data-bs-target="#analyticsModal" title="Показать аналитику">
+                        <i class="fas fa-chart-bar"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-    <p class="text-muted">
-        Тема: {{ blog.niche }}
-        Опубликовано {{ blog.created_at|date:"F d, Y" }}
-        Написано в стиле "{{ blog.author.name }}"
-    </p>
-
-    <p><strong>Ключевые слова:</strong> {{ blog.keywords }}</p>
-
-
-
-    <div id="blogContent" class="mb-4">
+    <div id="blogContent" class="mb-4" data-blog-analytic-action='{% url "blog_analytics" blog.slug %}'>
         {{ blog.content|markdown }}
     </div>
 
+    <div class="modal fade" id="analyticsModal" tabindex="-1" aria-labelledby="analyticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="analyticsModalLabel">Аналитика статьи</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loadingIndicator" class="text-center" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                        <p class="mt-2">Анализируем...</p>
+                    </div>
+                    <div id="analyticsContent">
+                        <p><strong>Количество слов:</strong> <span id="wordCount"></span></p>
+                        <p><strong>Количество символов:</strong> <span id="symbolCount"></span></p>
+                        <p><strong>Ключевые слова и их частота:</strong></p>
+                        <ul id="keywordsList"></ul>
+                    </div>
+                    <div id="errorMessage" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block include_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const copyButton = document.getElementById('copyButton');
-    const blogContent = document.getElementById('blogContent');
-
-    copyButton.addEventListener('click', function() {
-        // Создаем временный элемент textarea
-        const tempTextArea = document.createElement('textarea');
-        tempTextArea.value = blogContent.innerText;
-        document.body.appendChild(tempTextArea);
-
-        // Выбираем текст
-        tempTextArea.select();
-        tempTextArea.setSelectionRange(0, 99999); // Для мобильных устройств
-
-        // Копируем текст
-        document.execCommand('copy');
-
-        // Удаляем временный элемент
-        document.body.removeChild(tempTextArea);
-
-        // Изменяем иконку и текст кнопки для обратной связи
-        copyButton.innerHTML = '<i class="bi bi-check"></i> Скопировано';
-        copyButton.classList.add('btn-success');
-        copyButton.classList.remove('btn-outline-secondary');
-
-        // Возвращаем исходный вид кнопки через 2 секунды
-        setTimeout(() => {
-            copyButton.innerHTML = '<i class="bi bi-clipboard"></i>';
-            copyButton.classList.remove('btn-success');
-            copyButton.classList.add('btn-outline-secondary');
-        }, 2000);
-    });
-});
-</script>
+    <script src="{% static 'js/blog_detail_utils.js' %}"></script>
 {% endblock %}

@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="d-flex align-items-center gap-3 mb-4">
-        <a href="{% url 'blog_list' %}" class="btn btn-secondary" title="Назад"><i class="fas fa-arrow-left"></i></a>
+        <a href="{% if blog %}{% url 'blog_detail' blog.slug %}{% else %}{% url 'blog_list'%}{% endif %}" class="btn btn-secondary" title="Назад"><i class="fas fa-arrow-left"></i></a>
 
         <h1>{% if blog %}Редактировать{% else %}Создать Новый{% endif %} Блог</h1>
     </div>

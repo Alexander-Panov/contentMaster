@@ -6,6 +6,8 @@ from django.db import models
 from django.db import models
 from pytils.translit import slugify
 
+from blog_generator.blog.blog_configs import LANGUAGES
+
 
 class Author(models.Model):
     name = models.CharField(max_length=255)
@@ -38,7 +40,7 @@ class Blog(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     content = models.TextField()
     niche = models.CharField(max_length=100)
-    keywords = models.CharField(max_length=200)
+    language = models.CharField(max_length=20, choices=LANGUAGES, default='russian')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
