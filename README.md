@@ -3,9 +3,17 @@
 Отборочный тур - 10-15 сентября 2024.
 Трек «Разработка бизнес-приложений с использованием искусственного интеллекта».
 
-[Развернутое Приложение](https://contentmaster.twc1.net/)
+Стек: Python Django
+
+[Codemasters CodeCup 2024: итоги и победители](https://codecup.online/blog/codemasters-codecup-2024-itogi-i-pobediteli)
+
+[Студент ЛЭТИ – победитель Всероссийского турнира Codemasters Code Cup 2024](https://etu.ru/ru/studentam/studencheskie-novosti/student-leti-pobeditel-vserossijskogo-turnira-codemasters-code-cup-2024)
+
+
 
 ## Технические требования
+
+[Отборочный ИИ.pdf](task/%D0%9E%D1%82%D0%B1%D0%BE%D1%80%D0%BE%D1%87%D0%BD%D1%8B%D0%B9%20%D0%98%D0%98.pdf)
 
 1. ✅ Настройка профиля автора статьи
 
@@ -93,7 +101,10 @@
 
 ## FIXME:
 
-1. Фиговые stopwords
+1. Фиговые stopwords - https://github.com/stopwords-iso/stopwords-ru
+2. Фиговый подсчет слов
+3. Лемматизация
+4. Формы: больше 100 символов в теме, число слов может быть не числом
 
 ## IDEAS:
 
